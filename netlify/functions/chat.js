@@ -1,4 +1,19 @@
 exports.handler = async function (event) {
+  if (event.queryStringParameters && event.queryStringParameters.debug === "1") {
+    const key = process.env.ANTHROPIC_API_KEY || "";
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        keyExists: !!process.env.ANTHROPIC_API_KEY,
+        keyLength: key.length,
+        startsWith: key.slice(0, 12),
+        endsWith: key.slice(-6),
+        hasWhitespace: /\s/.test(key),
+      }),
+    };
+  }
+
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
